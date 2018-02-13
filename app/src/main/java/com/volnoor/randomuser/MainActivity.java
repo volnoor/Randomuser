@@ -1,7 +1,8 @@
 package com.volnoor.randomuser;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,25 +15,55 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+
+    private RecyclerView mRecyclerView;
+    private ProgressBar mProgressBar;
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
+    private RandomuserClient mClient;
+
+    private int mCurrentPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final RecyclerView recyclerView = findViewById(R.id.rv_users);
-        recyclerView.setHasFixedSize(true);
+        mRecyclerView = findViewById(R.id.rv_users);
+        mRecyclerView.setHasFixedSize(true);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(linearLayoutManager);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
 
-        final ProgressBar pb = findViewById(R.id.pb_main);
+        // Progressbar is active by default
+        mProgressBar = findViewById(R.id.pb_main);
 
-        RandomuserClient client = APIClient.getClient(this).create(RandomuserClient.class);
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        // Configure the refreshing colors
+        mSwipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
-        Call<RandomuserResponse> call = client.getUsers(1, 10, "abc");
+
+        mClient = APIClient.getClient(this).create(RandomuserClient.class);
+
+        loadUsers(++mCurrentPage);
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.d(TAG, "onRefresh");
+
+        loadUsers(++mCurrentPage);
+    }
+
+    private void loadUsers(int page) {
+        Call<RandomuserResponse> call = mClient.getUsers(page, 10, "abc");
 
         call.enqueue(new Callback<RandomuserResponse>() {
             @Override
@@ -40,18 +71,20 @@ public class MainActivity extends AppCompatActivity {
                 List<RandomuserResponse.Result> results = response.body().getResults();
 
                 UserAdapter adapter = new UserAdapter(MainActivity.this, results);
-                recyclerView.setAdapter(adapter);
+                mRecyclerView.setAdapter(adapter);
 
-                // Disable progressbar
-                pb.setVisibility(View.INVISIBLE);
+                // Disable progressbar and refresh indicator
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mSwipeRefreshLayout.setRefreshing(false);
 
-                Log.d(TAG, "onResponse");
+                Log.d(TAG, "onResponse ");
             }
 
             @Override
             public void onFailure(Call<RandomuserResponse> call, Throwable t) {
-                // Disable progressbar
-                pb.setVisibility(View.INVISIBLE);
+                // Disable progressbar and refresh indicator
+                mProgressBar.setVisibility(View.INVISIBLE);
+                mSwipeRefreshLayout.setRefreshing(false);
 
                 Log.d(TAG, "onFailure " + t.getMessage());
             }
