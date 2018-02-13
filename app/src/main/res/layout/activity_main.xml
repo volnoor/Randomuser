@@ -13,4 +13,10 @@
         android:paddingTop="8dp"
         tools:listitem="@layout/user_list_item" />
 
+    <ProgressBar
+        android:id="@+id/pb_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
 </RelativeLayout>

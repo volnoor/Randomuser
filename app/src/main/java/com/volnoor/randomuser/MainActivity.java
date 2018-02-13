@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import java.util.List;
 
@@ -26,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        RandomuserClient client = APIClient.getClient().create(RandomuserClient.class);
+        final ProgressBar pb = findViewById(R.id.pb_main);
+
+        RandomuserClient client = APIClient.getClient(this).create(RandomuserClient.class);
 
         Call<RandomuserResponse> call = client.getUsers(1, 10, "abc");
 
@@ -38,11 +42,17 @@ public class MainActivity extends AppCompatActivity {
                 UserAdapter adapter = new UserAdapter(MainActivity.this, results);
                 recyclerView.setAdapter(adapter);
 
+                // Disable progressbar
+                pb.setVisibility(View.INVISIBLE);
+
                 Log.d(TAG, "onResponse");
             }
 
             @Override
             public void onFailure(Call<RandomuserResponse> call, Throwable t) {
+                // Disable progressbar
+                pb.setVisibility(View.INVISIBLE);
+
                 Log.d(TAG, "onFailure " + t.getMessage());
             }
         });
