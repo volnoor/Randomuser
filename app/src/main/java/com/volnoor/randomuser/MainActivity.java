@@ -1,5 +1,6 @@
 package com.volnoor.randomuser;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener,
+        UserAdapter.OnItemClickListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
@@ -89,5 +91,15 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 Log.d(TAG, "onFailure " + t.getMessage());
             }
         });
+    }
+
+    @Override
+    public void itemClicked(RandomuserResponse.Result user) {
+        Log.d(TAG, "item clicked");
+
+        Intent intent = new Intent(this, UserInfoActivity.class)
+                .putExtra("user", user); // Pass user to UserInfoActivity
+
+        startActivity(intent);
     }
 }

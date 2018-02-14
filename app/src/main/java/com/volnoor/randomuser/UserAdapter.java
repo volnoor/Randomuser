@@ -19,10 +19,12 @@ import java.util.List;
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private Context context;
     private List<RandomuserResponse.Result> users;
+    private OnItemClickListener listener;
 
     public UserAdapter(Context context, List<RandomuserResponse.Result> users) {
         this.context = context;
         this.users = users;
+        listener = (OnItemClickListener) context;
     }
 
     @Override
@@ -34,13 +36,21 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        RandomuserResponse.Result user = users.get(position);
+        final RandomuserResponse.Result user = users.get(position);
 
         Picasso.with(context)
                 .load(user.getPicture().getThumbnail())
                 .into(holder.ivThumbnail);
 
         holder.tvName.setText(user.getName().getFirst());
+
+        // Set on click listener for whole view
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.itemClicked(user);
+            }
+        });
     }
 
     @Override
@@ -58,5 +68,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             ivThumbnail = itemView.findViewById(R.id.iv_thumbnail);
             tvName = itemView.findViewById(R.id.tv_name);
         }
+    }
+
+    public interface OnItemClickListener {
+        void itemClicked(RandomuserResponse.Result user);
     }
 }
