@@ -21,6 +21,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIClient {
     private static Retrofit retrofit = null;
 
+    private static final String BASE_URL = "https://randomuser.me";
+
     public static Retrofit getClient(final Context context) {
         // Setup Interceptor
         Interceptor cacheInterceptor = new Interceptor() {
@@ -65,7 +67,7 @@ public class APIClient {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl("https://randomuser.me")
+                .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(httpClient)
                 .build();

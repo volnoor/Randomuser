@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         mClient = APIClient.getClient(this).create(RandomuserClient.class);
 
+        // Load users starting with 1 page
         loadUsers(++mCurrentPage);
     }
 
@@ -71,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     public void onRefresh() {
         Log.d(TAG, "onRefresh");
 
+        // Load users from the next page
         loadUsers(++mCurrentPage);
     }
 
@@ -113,7 +115,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         Log.d(TAG, "item clicked");
 
         Intent intent = new Intent(this, UserInfoActivity.class)
-                .putExtra("user", user); // Pass user to UserInfoActivity
+                .putExtra(getString(R.string.key_user), user); // Pass user to UserInfoActivity
 
         startActivity(intent);
     }

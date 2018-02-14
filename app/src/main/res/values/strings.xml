@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Randomuser</string>
+    <string name="key_user">user</string>
 </resources>

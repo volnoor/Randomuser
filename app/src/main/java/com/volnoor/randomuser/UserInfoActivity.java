@@ -23,20 +23,18 @@ public class UserInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_info);
 
         ImageView ivLarge = findViewById(R.id.iv_large);
-        TextView tvFirst = findViewById(R.id.tv_first_name);
-        TextView tvLast = findViewById(R.id.tv_last_name);
+        TextView tvName = findViewById(R.id.tv_name);
         TextView tvEmail = findViewById(R.id.tv_email);
         TextView tvRegistered = findViewById(R.id.tv_registered);
 
-        RandomuserResponse.Result user = getIntent().getExtras().getParcelable("user");
+        RandomuserResponse.Result user = getIntent().getExtras().getParcelable(getString(R.string.key_user));
 
         // Load large user image
         Picasso.with(this)
                 .load(user.getPicture().getLarge())
                 .into(ivLarge);
 
-        tvFirst.setText(user.getName().getFirst());
-        tvLast.setText(user.getName().getLast());
+        tvName.setText(user.getName().getFirst() + " " + user.getName().getLast());
         tvEmail.setText(user.getEmail());
 
         // Parse registration date

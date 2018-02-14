@@ -3,7 +3,6 @@ package com.volnoor.randomuser;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -15,29 +14,24 @@ import java.util.List;
 public class RandomuserResponse {
 
     @SerializedName("results")
-    @Expose
-    private List<Result> results = null;
+    private List<Result> results = null; // List of users
 
     public List<Result> getResults() {
         return results;
     }
 
-    public static class Result implements Parcelable {
+    public static class Result implements Parcelable { // A user
 
         @SerializedName("name")
-        @Expose
         private Name name;
 
         @SerializedName("picture")
-        @Expose
         private Picture picture;
 
         @SerializedName("email")
-        @Expose
         private String email;
 
         @SerializedName("registered")
-        @Expose
         private String registered;
 
         protected Result(Parcel in) {
@@ -92,11 +86,9 @@ public class RandomuserResponse {
     public static class Name implements Parcelable {
 
         @SerializedName("first")
-        @Expose
         private String first;
 
         @SerializedName("last")
-        @Expose
         private String last;
 
         protected Name(Parcel in) {
@@ -139,11 +131,9 @@ public class RandomuserResponse {
     public static class Picture implements Parcelable {
 
         @SerializedName("thumbnail")
-        @Expose
         private String thumbnail;
 
         @SerializedName("large")
-        @Expose
         private String large;
 
         protected Picture(Parcel in) {
