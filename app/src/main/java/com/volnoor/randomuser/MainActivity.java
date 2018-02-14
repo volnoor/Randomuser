@@ -10,6 +10,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,6 +24,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private RecyclerView mRecyclerView;
+    private UserAdapter mUserAdapter;
+    private List<RandomuserResponse.Result> mUsersList;
+
     private ProgressBar mProgressBar;
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -39,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mUsersList = new ArrayList<>();
+        mUserAdapter = new UserAdapter(this, mUsersList);
+        mRecyclerView.setAdapter(mUserAdapter);
 
         // Progressbar is active by default
         mProgressBar = findViewById(R.id.pb_main);
@@ -72,8 +82,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             public void onResponse(Call<RandomuserResponse> call, Response<RandomuserResponse> response) {
                 List<RandomuserResponse.Result> results = response.body().getResults();
 
-                UserAdapter adapter = new UserAdapter(MainActivity.this, results);
-                mRecyclerView.setAdapter(adapter);
+                // Sort in alphabetical order
+                Collections.sort(results, comparator);
+
+                // Fill user list with new items
+                mUsersList.clear();
+                mUsersList.addAll(results);
+                mUserAdapter.notifyDataSetChanged();
 
                 // Disable progressbar and refresh indicator
                 mProgressBar.setVisibility(View.INVISIBLE);
@@ -102,4 +117,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         startActivity(intent);
     }
+
+    // Used for sorting in alphabetical order
+    Comparator<RandomuserResponse.Result> comparator = new Comparator<RandomuserResponse.Result>() {
+        @Override
+        public int compare(RandomuserResponse.Result o1, RandomuserResponse.Result o2) {
+            return o1.getName().getFirst().compareTo(o2.getName().getFirst());
+        }
+    };
 }
